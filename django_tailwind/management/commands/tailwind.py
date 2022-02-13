@@ -1,3 +1,4 @@
+from sys import stderr
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from pathlib import Path
@@ -46,7 +47,7 @@ class Command(BaseCommand):
         else:
             STYLES_DIST_PATH.parent.mkdir(parents=True, exist_ok=True)
 
-            subprocess.run(
+            p = subprocess.Popen(
                 [
                     "tailwindcss",
                     "-i",
@@ -56,5 +57,15 @@ class Command(BaseCommand):
                     "-c",
                     str(CONFIG_PATH),
                     "--watch",
-                ]
+                ],
+                start_new_session=True,
             )
+
+            try:
+                p.wait()
+            except KeyboardInterrupt:
+                try:
+                    p.terminate()
+                except OSError:
+                    pass
+                p.wait()
