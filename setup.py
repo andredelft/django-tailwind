@@ -9,4 +9,5 @@ setup(
     description="Django Tailwind utilities",
     packages=find_packages(),
     install_requires=REQUIREMENTS,
+    include_package_data=True,
 )
