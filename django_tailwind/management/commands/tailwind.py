@@ -1,4 +1,3 @@
-from sys import stderr
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from pathlib import Path
@@ -46,26 +45,18 @@ class Command(BaseCommand):
 
         else:
             STYLES_DIST_PATH.parent.mkdir(parents=True, exist_ok=True)
-
-            p = subprocess.Popen(
-                [
-                    "tailwindcss",
-                    "-i",
-                    str(STYLES_SRC_PATH),
-                    "-o",
-                    str(STYLES_DIST_PATH),
-                    "-c",
-                    str(CONFIG_PATH),
-                    "--watch",
-                ],
-                start_new_session=True,
-            )
-
             try:
-                p.wait()
+                subprocess.call(
+                    [
+                        "tailwindcss",
+                        "-i",
+                        str(STYLES_SRC_PATH),
+                        "-o",
+                        str(STYLES_DIST_PATH),
+                        "-c",
+                        str(CONFIG_PATH),
+                        "--watch",
+                    ]
+                )
             except KeyboardInterrupt:
-                try:
-                    p.terminate()
-                except OSError:
-                    pass
-                p.wait()
+                pass
