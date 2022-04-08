@@ -28,8 +28,15 @@ class Command(BaseCommand):
 
         parser.add_argument(
             "--init",
+            "-i",
             action="store_true",
             help="Initiate required Tailwind files",
+        )
+        parser.add_argument(
+            "--minify",
+            "-m",
+            action="store_true",
+            help="Minify Tailwind output",
         )
 
     def handle(self, *args, **options):
@@ -42,6 +49,20 @@ class Command(BaseCommand):
             for fpath_in, fpath_out in zip(TEMPLATE_PATHS, OUTPUT_PATHS):
                 with open(fpath_in) as f_in, open(fpath_out, "w") as f_out:
                     f_out.write(f_in.read())
+
+        elif options["minify"]:
+            subprocess.call(
+                [
+                    "tailwindcss",
+                    "-i",
+                    str(STYLES_SRC_PATH),
+                    "-o",
+                    str(STYLES_DIST_PATH),
+                    "-c",
+                    str(CONFIG_PATH),
+                    "--minify",
+                ]
+            )
 
         else:
             STYLES_DIST_PATH.parent.mkdir(parents=True, exist_ok=True)
